@@ -1,6 +1,6 @@
 # StudentManagmentSystem
 
-# College Management System - Admin Portal
+# College Management System
 
 This Java-based application provides an administrative interface for managing students, courses, and fee information. The system allows an admin to perform CRUD (Create, Read, Update, Delete) operations on student and course data and manage login access.
 
