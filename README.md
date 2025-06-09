@@ -1,90 +1,138 @@
 🎓 Student Management System – Java Project
-This project is a Java-based Student Management System that provides functionality for managing student data, including login authentication, course details, performance tracking, and fee status. The system supports both Admin and Student interfaces.
+
+This project is a Java-based Student Management System that provides complete functionality for managing student data through a graphical user interface. It handles user authentication, course enrollment, academic performance, fee tracking, and database operations using JDBC.
+
+The system supports both Admin and Student roles:
+
+Admin can manage students, courses, and fees.
+
+Student can log in to view personal academic and financial information.
 
 📁 Project Structure
-graphql
-Copy
-Edit
 
-
- 
-├── AdminHomepage.java         # Admin dashboard for managing students and data
-├── StudentHomepage.java       # Student dashboard to view courses, performance, fees
-├── Student.java               # Class for storing and managing student information
-├── Course.java                # Manages course-related data
-├── Performance.java           # Tracks student academic performance
-├── Fees.java                  # Handles student fee details and payments
-├── loginPage.java             # Login GUI for authentication (Student/Admin)
-├── ConnectionClass.java       # Establishes JDBC connection with MySQL database
-
+.
+├── AdminHomepage.java         # Admin dashboard for managing students, performance, and fees
+├── StudentHomepage.java       # Student dashboard with personal academic and fee information
+├── Student.java               # Data model for student details
+├── Course.java                # Handles course details and structure
+├── Performance.java           # Stores and manages student academic performance
+├── Fees.java                  # Manages fee payment status and related logic
+├── loginPage.java             # Entry point with login interface
+├── ConnectionClass.java       # MySQL database connection configuration
 
 ✅ Features
 
-🔐 Authentication
-Login page for Admin and Student
+🔐 Login Authentication
 
-Validation via username and password
+Role-based access for Admin and Student
 
-👨‍🎓 Student Interface
-View enrolled courses
+Validation using username-password combinations stored in database
 
-Track academic performance
+👨‍🎓 Student Panel
 
-View fee status and history
+View courses enrolled
 
-🛠️ Admin Interface
-Add, delete, or update student records
+Check academic performance (grades)
 
-View complete student academic and fee details
+See fee dues and payment history
 
-Manage course enrollments
+🛠️ Admin Panel
+
+Add, update, and delete student data
+
+Assign or update course enrollments
+
+View and update student performance
+
+Track fee payment status
 
 🛠️ Technologies Used
-Java Swing for GUI design
 
-MySQL for database management
+Java (Core + Swing for GUI)
 
-JDBC for database connectivity
+MySQL (Relational Database)
 
-Object-Oriented Programming (OOP) principles
+JDBC API (Java Database Connectivity)
+
+Object-Oriented Programming principles
 
 🚀 Getting Started
+
 Prerequisites
-Java JDK 8 or higher
 
-MySQL Server installed and running
+Java JDK 8 or above
 
-MySQL JDBC Driver (mysql-connector-java.jar)
+MySQL Server
+
+MySQL JDBC Connector (add to classpath)
 
 Setup Instructions
-Clone or download this repository.
 
-Configure MySQL database using the following credentials (can be updated in ConnectionClass.java):
+Download or clone the repository.
 
-java
-Copy
-Edit
-con = DriverManager.getConnection("jdbc:mysql://localhost:3306/your_database", "root", "your_password");
-Compile all .java files:
+Set up your MySQL database with necessary tables (see below).
 
-bash
-Copy
-Edit
+Update DB credentials in ConnectionClass.java:
+
+con = DriverManager.getConnection("jdbc:mysql://localhost:3306/student_db", "root", "your_password");
+
+Compile the source code:
+
 javac *.java
+
 Run the application:
 
-bash
-Copy
-Edit
 java loginPage
-🧩 Database Structure (Suggested)
-You should have the following tables:
 
-students(id, name, course, password, ...)
+🧹 Suggested MySQL Database Schema
 
-courses(id, course_name, instructor, ...)
+CREATE TABLE students (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    name VARCHAR(100),
+    course VARCHAR(50),
+    password VARCHAR(100)
+);
 
-fees(student_id, amount_due, status)
+CREATE TABLE courses (
+    id INT PRIMARY KEY AUTO_INCREMENT,
+    course_name VARCHAR(100),
+    instructor VARCHAR(100)
+);
 
-performance(student_id, subject, grade)
+CREATE TABLE performance (
+    student_id INT,
+    subject VARCHAR(100),
+    grade CHAR(2),
+    FOREIGN KEY (student_id) REFERENCES students(id)
+);
+
+CREATE TABLE fees (
+    student_id INT,
+    amount_due DECIMAL(10,2),
+    status VARCHAR(50),
+    FOREIGN KEY (student_id) REFERENCES students(id)
+);
+
+💼 Example Workflow
+
+Admin logs in and adds a new student.
+
+Admin assigns courses and sets performance records.
+
+Student logs in to check academic and fee status.
+
+Admin updates fee records upon payment.
+
+
+📄 License
+
+This project is open-source and available for educational or academic use only.
+
+ℹ️ Additional Notes
+
+Make sure MySQL server is running when you execute the program.
+
+Tables must be created in the database before running the application.
+
+Update credentials before compiling to avoid SQLException.
 
