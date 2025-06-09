@@ -1,85 +1,90 @@
-# StudentManagmentSystem
+🎓 Student Management System – Java Project
+This project is a Java-based Student Management System that provides functionality for managing student data, including login authentication, course details, performance tracking, and fee status. The system supports both Admin and Student interfaces.
 
-# College Management System
-
-This Java-based application provides an administrative interface for managing students, courses, and fee information. The system allows an admin to perform CRUD (Create, Read, Update, Delete) operations on student and course data and manage login access.
-
-## 💻 Features
-
-- **Admin Login Page**
-  - Secure login for administrators
-- **Student Management**
-  - Add, view, and manage student records
-- **Course Management**
-  - Manage available courses
-- **Fees Management**
-  - View and manage student fee details
-- **Database Connectivity**
-  - Uses JDBC to connect with a MySQL database
-
-## 🗂️ Project Structure
-
-```
-src/
-├── AdminHomepage.java      // Main admin dashboard
-├── loginPage.java          // Admin login interface
-├── Student.java            // Student management module
-├── Course.java             // Course management module
-├── Fees.java               // Fees management module
-├── ConnectionClass.java    // Handles DB connection
-```
-
-## 🛠️ Technologies Used
-
-- Java (Swing for GUI)
-- JDBC
-- MySQL
-
-## 🧾 Prerequisites
-
-- Java JDK 8 or above
-- MySQL Server
-- MySQL JDBC Driver (add to classpath)
-- IDE like Eclipse, IntelliJ, or NetBeans
-
-## 🛠️ Setup Instructions
-
-1. **Clone the Repository**
-
-   ```bash
-   git clone https://github.com/your-username/college-management-system.git
-   cd college-management-system
-   ```
-
-2. **Set Up Database**
-
-   - Create a MySQL database named `college_db` (or as used in `ConnectionClass.java`)
-   - Run the provided SQL scripts (if any) to create the necessary tables (`students`, `courses`, `fees`, `admin`, etc.)
-
-3. **Configure Database Connection**
-
-   - Update the database credentials in `ConnectionClass.java`:
-
-     ```java
-     String username = "root";
-     String password = "your_password";
-     String url = "jdbc:mysql://localhost:3306/college_db";
-     ```
-
-4. **Run the Application**
-
-   - Compile all `.java` files
-   - Run `loginPage.java` to start the app
-
-## 🔐 Default Admin Credentials
-
-> ⚠️ Make sure to change the credentials after first use.
-
-- **Username:** admin  
-- **Password:** admin123
+📁 Project Structure
+graphql
+Copy
+Edit
 
 
+ 
+├── AdminHomepage.java         # Admin dashboard for managing students and data
+├── StudentHomepage.java       # Student dashboard to view courses, performance, fees
+├── Student.java               # Class for storing and managing student information
+├── Course.java                # Manages course-related data
+├── Performance.java           # Tracks student academic performance
+├── Fees.java                  # Handles student fee details and payments
+├── loginPage.java             # Login GUI for authentication (Student/Admin)
+├── ConnectionClass.java       # Establishes JDBC connection with MySQL database
 
-## 📜 License
 
-This project is for educational purposes. You can modify and use it freely with attribution.
+✅ Features
+
+🔐 Authentication
+Login page for Admin and Student
+
+Validation via username and password
+
+👨‍🎓 Student Interface
+View enrolled courses
+
+Track academic performance
+
+View fee status and history
+
+🛠️ Admin Interface
+Add, delete, or update student records
+
+View complete student academic and fee details
+
+Manage course enrollments
+
+🛠️ Technologies Used
+Java Swing for GUI design
+
+MySQL for database management
+
+JDBC for database connectivity
+
+Object-Oriented Programming (OOP) principles
+
+🚀 Getting Started
+Prerequisites
+Java JDK 8 or higher
+
+MySQL Server installed and running
+
+MySQL JDBC Driver (mysql-connector-java.jar)
+
+Setup Instructions
+Clone or download this repository.
+
+Configure MySQL database using the following credentials (can be updated in ConnectionClass.java):
+
+java
+Copy
+Edit
+con = DriverManager.getConnection("jdbc:mysql://localhost:3306/your_database", "root", "your_password");
+Compile all .java files:
+
+bash
+Copy
+Edit
+javac *.java
+Run the application:
+
+bash
+Copy
+Edit
+java loginPage
+🧩 Database Structure (Suggested)
+You should have the following tables:
+
+students(id, name, course, password, ...)
+
+courses(id, course_name, instructor, ...)
+
+fees(student_id, amount_due, status)
+
+performance(student_id, subject, grade)
+
