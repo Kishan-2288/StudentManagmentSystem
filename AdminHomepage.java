@@ -1,9 +1,9 @@
 package StudentManagement;
 
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import java.sql.*;
+import java.io.*;
 
 public class AdminHomepage extends JFrame {
 
@@ -48,7 +48,6 @@ public class AdminHomepage extends JFrame {
         courseDetailsButton = createMenuButton("Course Details", 600, 380);
         feesDetailsButton = createMenuButton("Fees Details", 800, 380);
         performanceButton = createMenuButton("Performance", 400, 440);
-        resultButton = createMenuButton("Result", 600, 440);
         logoutButton = createMenuButton("Logout", 800, 440);
 
         // Add buttons to background label
@@ -56,7 +55,6 @@ public class AdminHomepage extends JFrame {
         backgroundLabel.add(courseDetailsButton);
         backgroundLabel.add(feesDetailsButton);
         backgroundLabel.add(performanceButton);
-        backgroundLabel.add(resultButton);
         backgroundLabel.add(logoutButton);
 
         // Create popup menus
@@ -68,15 +66,14 @@ public class AdminHomepage extends JFrame {
                 "Add Fees Details", "Update Fees Details", "View Fees Details"});
         performanceMenu = createPopupMenu(new String[]{
                 "Add Performance Details", "Update Performance Details", "View Performance Details"});
-        resultMenu = createPopupMenu(new String[]{
-                "Add Result Details", "Update Result Details"});
+       
 
         // Add action listeners to buttons
         studentProfileButton.addActionListener(e -> studentProfileMenu.show(studentProfileButton, 0, studentProfileButton.getHeight()));
         courseDetailsButton.addActionListener(e -> courseDetailsMenu.show(courseDetailsButton, 0, courseDetailsButton.getHeight()));
         feesDetailsButton.addActionListener(e -> feesDetailsMenu.show(feesDetailsButton, 0, feesDetailsButton.getHeight()));
         performanceButton.addActionListener(e -> performanceMenu.show(performanceButton, 0, performanceButton.getHeight()));
-        resultButton.addActionListener(e -> resultMenu.show(resultButton, 0, resultButton.getHeight()));
+       
 
         // Logout button action
         logoutButton.addActionListener(e -> {
@@ -119,22 +116,31 @@ public class AdminHomepage extends JFrame {
                 break;
             case "Add Course Details":
                 addCourse();
-                break; // Added break statement
-             case "Update Course Details":
+                break;
+            case "Update Course Details":
                 updateCourseDetails();
-                break;  
+                break;
             case "View Course Details":
                 viewCourseDetails();
-                break; 
+                break;
             case "Add Fees Details":
                 addFees();
-                break; // Added break statement
-             case "Update Fees Details":
+                break;
+            case "Update Fees Details":
                 updateFeesDetails();
-                break;  
+                break;
             case "View Fees Details":
                 viewFeesDetails();
-                break;     
+                break;
+            case "Add Performance Details":
+                addPerformance();
+                break;
+            case "Update Performance Details":
+                updatePerformanceDetails();
+                break;
+            case "View Performance Details":
+                viewPerformanceDetails();
+                break;
             default:
                 System.out.println("Unknown action: " + command);
         }
@@ -145,9 +151,10 @@ public class AdminHomepage extends JFrame {
         String name = JOptionPane.showInputDialog("Enter Name:");
         String email = JOptionPane.showInputDialog("Enter Email:");
         String phone = JOptionPane.showInputDialog("Enter Phone:");
+        String password = JOptionPane.showInputDialog("Enter Password:");
 
-        if (studentId != null && name != null && email != null && phone != null) {
-            Student student = new Student(studentId, name, email, phone);
+        if (studentId != null && name != null && email != null && phone != null && password != null) {
+            Student student = new Student(studentId, name, email, phone, password);
             if (student.addStudent()) {
                 JOptionPane.showMessageDialog(this, "Student added successfully!");
             } else {
@@ -160,15 +167,14 @@ public class AdminHomepage extends JFrame {
         String studentId = JOptionPane.showInputDialog("Enter Student ID to Update:");
 
         if (studentId != null) {
-           
             String name = JOptionPane.showInputDialog("Enter New Name:");
             String email = JOptionPane.showInputDialog("Enter New Email:");
             String phone = JOptionPane.showInputDialog("Enter New Phone:");
+            String password = JOptionPane.showInputDialog("Enter New Password:");
 
-            if (name != null && email != null && phone != null) {
-                
-                Student student = new Student(studentId, name, email, phone);
-                if (student.updateStudent()) { // Call the correct update method
+            if (name != null && email != null && phone != null && password != null) {
+                Student student = new Student(studentId, name, email, phone, password);
+                if (student.updateStudent()) {
                     JOptionPane.showMessageDialog(this, "Student updated successfully!");
                 } else {
                     JOptionPane.showMessageDialog(this, "Failed to update student. Please check if the student ID exists.");
@@ -181,8 +187,7 @@ public class AdminHomepage extends JFrame {
         String studentId = JOptionPane.showInputDialog("Enter Student ID to View:");
 
         if (studentId != null) {
-          
-            Student student = new Student(studentId, null, null, null); // Only ID is needed for retrieval
+            Student student = new Student(studentId, null, null, null, null); // Only ID is needed for retrieval
             Student retrievedStudent = student.viewStudentDetails(); // Call the view method
 
             if (retrievedStudent != null) {
@@ -190,7 +195,8 @@ public class AdminHomepage extends JFrame {
                 String message = "Student ID: " + retrievedStudent.getStudentId() +
                         "\nName: " + retrievedStudent.getName() +
                         "\nEmail: " + retrievedStudent.getEmail() +
-                        "\nPhone: " + retrievedStudent.getPhone();
+                        "\nPhone: " + retrievedStudent.getPhone() +
+                        "\nPassword: " + retrievedStudent.getPassword();
                 JOptionPane.showMessageDialog(this, message, "Student Details", JOptionPane.INFORMATION_MESSAGE);
             } else {
                 JOptionPane.showMessageDialog(this, "No student found with the given ID.", "Error", JOptionPane.ERROR_MESSAGE);
@@ -198,43 +204,19 @@ public class AdminHomepage extends JFrame {
         }
     }
 
-   private void addCourse() {
-    String courseId = JOptionPane.showInputDialog("Enter Course ID:");
-    String courseName = JOptionPane.showInputDialog("Enter Course Name:");
-    String creditsInput = JOptionPane.showInputDialog("Enter Credits:");
+    private void addCourse() {
+        String courseId = JOptionPane.showInputDialog("Enter Course ID:");
+        String courseName = JOptionPane.showInputDialog("Enter Course Name:");
+        String creditsInput = JOptionPane.showInputDialog("Enter Credits:");
 
-    if (courseId != null && courseName != null && creditsInput != null) {
-        try {
-            int credits = Integer.parseInt(creditsInput); // Convert String to int
-            Course course = new Course(courseId, courseName, credits); // Corrected constructor call
-            if (course.addCourse()) {
-                JOptionPane.showMessageDialog(this, "Course added successfully!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to add Course.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid input for credits. Please enter a valid integer.");
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Input was cancelled or invalid.");
-    }
-}
-   
-    private void updateCourseDetails() {
-    String courseId = JOptionPane.showInputDialog("Enter Course ID to Update:");
-
-    if (courseId != null) {
-        String courseName = JOptionPane.showInputDialog("Enter New Course Name:");
-        String creditsInput = JOptionPane.showInputDialog("Enter New Credits:");
-
-        if (courseName != null && creditsInput != null) {
+        if (courseId != null && courseName != null && creditsInput != null) {
             try {
                 int credits = Integer.parseInt(creditsInput); // Convert String to int
-                Course course = new Course(courseId, courseName, credits); // Create Course object with new details
-                if (course.updateCourse()) { // Call the correct update method
-                    JOptionPane.showMessageDialog(this, "Course updated successfully!");
+                Course course = new Course(courseId, courseName, credits);
+                if (course.addCourse()) {
+                    JOptionPane.showMessageDialog(this, "Course added successfully!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Failed to update Course. Please check if the course ID exists.");
+                    JOptionPane.showMessageDialog(this, "Failed to add Course.");
                 }
             } catch (NumberFormatException e) {
                 JOptionPane.showMessageDialog(this, "Invalid input for credits. Please enter a valid integer.");
@@ -243,97 +225,190 @@ public class AdminHomepage extends JFrame {
             JOptionPane.showMessageDialog(this, "Input was cancelled or invalid.");
         }
     }
-}
-    
-    private void viewCourseDetails() {
-    String courseId = JOptionPane.showInputDialog("Enter Course ID to View:");
 
-    if (courseId != null) {
-        Course course = new Course(courseId, null, 0); // Only ID is needed for retrieval
-        Course retrievedCourse = course.viewCourseDetails(); // Call the view method
+    private void updateCourseDetails() {
+        String courseId = JOptionPane.showInputDialog("Enter Course ID to Update:");
 
-        if (retrievedCourse != null) {
-            // Display the course details
-            String message = "Course ID: " + retrievedCourse.getCourseId() +
-                    "\nCourse Name: " + retrievedCourse.getCourseName() +
-                    "\nCredits: " + retrievedCourse.getCredits();
-            JOptionPane.showMessageDialog(this, message, "Course Details", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "No course found with the given ID.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (courseId != null) {
+            String courseName = JOptionPane.showInputDialog("Enter New Course Name:");
+            String creditsInput = JOptionPane.showInputDialog("Enter New Credits:");
+
+            if (courseName != null && creditsInput != null) {
+                try {
+                    int credits = Integer.parseInt(creditsInput); // Convert String to int
+                    Course course = new Course(courseId, courseName, credits);
+                    if (course.updateCourse()) {
+                        JOptionPane.showMessageDialog(this, "Course updated successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to update Course. Please check if the course ID exists.");
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input for credits. Please enter a valid integer.");
+                }
+            }
         }
     }
-}
+
+    private void viewCourseDetails() {
+        String courseId = JOptionPane.showInputDialog("Enter Course ID to View:");
+
+        if (courseId != null) {
+            Course course = new Course(courseId, null, 0); // Only ID is needed for retrieval
+            Course retrievedCourse = course.viewCourseDetails(); // Call the view method
+
+            if (retrievedCourse != null) {
+                // Display the course details
+                String message = "Course ID: " + retrievedCourse.getCourseId() +
+                        "\nCourse Name: " + retrievedCourse.getCourseName() +
+                        "\nCredits: " + retrievedCourse.getCredits();
+                JOptionPane.showMessageDialog(this, message, "Course Details", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No course found with the given ID.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
     private void addFees() {
-    String id = JOptionPane.showInputDialog("Enter  ID:");
-    String ProgrameName = JOptionPane.showInputDialog("Enter Programe Name:");
-    String FeesInput = JOptionPane.showInputDialog("Enter Fees:");
+        String id = JOptionPane.showInputDialog("Enter ID:");
+        String programName = JOptionPane.showInputDialog("Enter Program Name:");
+        String feesInput = JOptionPane.showInputDialog("Enter Fees:");
 
-    if (id != null && ProgrameName != null && FeesInput != null) {
-        try {
-            int Fees = Integer.parseInt(FeesInput); // Convert String to int
-            Fees fees = new Fees(id, ProgrameName, Fees); // Corrected constructor call
-            if (fees.addFees()) {
-                JOptionPane.showMessageDialog(this, "Fees added successfully!");
-            } else {
-                JOptionPane.showMessageDialog(this, "Failed to add Fees.");
-            }
-        } catch (NumberFormatException e) {
-            JOptionPane.showMessageDialog(this, "Invalid input for Fees. Please enter a valid integer.");
-        }
-    } else {
-        JOptionPane.showMessageDialog(this, "Input was cancelled or invalid.");
-    }
-}
-   
-    private void updateFeesDetails() {
-    String id = JOptionPane.showInputDialog("Enter  ID to Update:");
-
-    if (id != null) {
-        String ProgrameName = JOptionPane.showInputDialog("Enter New Programe Name:");
-        String FeesInput = JOptionPane.showInputDialog("Enter New Fees:");
-
-        if (ProgrameName != null && FeesInput != null) {
+        if (id != null && programName != null && feesInput != null) {
             try {
-                int Fees = Integer.parseInt(FeesInput); // Convert String to int
-                Fees fees = new Fees(id, ProgrameName, Fees); // Create Course object with new details
-                if (fees.updateFees()) { // Call the correct update method
-                    JOptionPane.showMessageDialog(this, "Programe updated successfully!");
+                int fees = Integer.parseInt(feesInput); // Convert String to int
+                Fees feesObj = new Fees(id, programName, fees);
+                if (feesObj.addFees()) {
+                    JOptionPane.showMessageDialog(this, "Fees added successfully!");
                 } else {
-                    JOptionPane.showMessageDialog(this, "Failed to update Programe. Please check if the course ID exists.");
+                    JOptionPane.showMessageDialog(this, "Failed to add Fees.");
                 }
             } catch (NumberFormatException e) {
-                JOptionPane.showMessageDialog(this, "Invalid input for Programe. Please enter a valid integer.");
+                JOptionPane.showMessageDialog(this, "Invalid input for Fees. Please enter a valid integer.");
             }
         } else {
             JOptionPane.showMessageDialog(this, "Input was cancelled or invalid.");
         }
     }
-}
-    
-   private void viewFeesDetails() {
-    String id = JOptionPane.showInputDialog("Enter  ID to View:");
 
-    if (id != null && !id.trim().isEmpty()) {
-        Fees fees = new Fees(id, null, 0); // Only ID is needed for retrieval
-        Fees retrievedFees = fees.viewFeesDetails(); // Call the view method
+    private void updateFeesDetails() {
+        String id = JOptionPane.showInputDialog("Enter ID to Update:");
 
-        if (retrievedFees != null) {
-            // Display the fees details
-            String message = "Program ID: " + retrievedFees.getProgramId() +
-                    "\nProgram Name: " + retrievedFees.getProgramName() +
-                    "\nFees: " + retrievedFees.getFees();
-            JOptionPane.showMessageDialog(this, message, "Fees Details", JOptionPane.INFORMATION_MESSAGE);
-        } else {
-            JOptionPane.showMessageDialog(this, "No fees found with the given Program ID.", "Error", JOptionPane.ERROR_MESSAGE);
+        if (id != null) {
+            String programName = JOptionPane.showInputDialog("Enter New Program Name:");
+            String feesInput = JOptionPane.showInputDialog("Enter New Fees:");
+
+            if (programName != null && feesInput != null) {
+                try {
+                    int fees = Integer.parseInt(feesInput); // Convert String to int
+                    Fees feesObj = new Fees(id, programName, fees);
+                    if (feesObj.updateFees()) {
+                        JOptionPane.showMessageDialog(this, "Program updated successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to update Program. Please check if the course ID exists.");
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input for Program. Please enter a valid integer.");
+                }
+            }
         }
-    } else {
-        JOptionPane.showMessageDialog(this, "Program ID cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
     }
-}
 
+    private void viewFeesDetails() {
+        String id = JOptionPane.showInputDialog("Enter ID to View:");
 
+        if (id != null && !id.trim().isEmpty()) {
+            Fees feesObj = new Fees(id, null, 0); // Only ID is needed for retrieval
+            Fees retrievedFees = feesObj.viewFeesDetails(); // Call the view method
 
+            if (retrievedFees != null) {
+                // Display the fees details
+                String message = "Program ID: " + retrievedFees.getProgramId() +
+                        "\nProgram Name: " + retrievedFees.getProgramName() +
+                        "\nFees: " + retrievedFees.getFees();
+                JOptionPane.showMessageDialog(this, message, "Fees Details", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No fees found with the given Program ID.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Program ID cannot be empty.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void addPerformance() {
+        String studentId = JOptionPane.showInputDialog("Enter Student ID:");
+        String courseName = JOptionPane.showInputDialog("Enter Course Name:");
+        String obtainMarksInput = JOptionPane.showInputDialog("Enter Obtained Marks:");
+        String maximumMarksInput = JOptionPane.showInputDialog("Enter Maximum Marks:");
+        String totalMarksInput = JOptionPane.showInputDialog("Enter Total Marks:");
+
+        if (studentId != null && courseName != null && obtainMarksInput != null && maximumMarksInput != null && totalMarksInput != null) {
+            try {
+                int obtainMarks = Integer.parseInt(obtainMarksInput);
+                int maximumMarks = Integer.parseInt(maximumMarksInput);
+                int totalMarks = Integer.parseInt(totalMarksInput);
+                
+                Performance performance = new Performance(studentId, courseName, String.valueOf(obtainMarks), String.valueOf(maximumMarks), String.valueOf(totalMarks));
+                if (performance.addPerformance()) {
+                    JOptionPane.showMessageDialog(this, "Performance record added successfully!");
+                } else {
+                    JOptionPane.showMessageDialog(this, "Failed to add performance record.");
+                }
+            } catch (NumberFormatException e) {
+                JOptionPane.showMessageDialog(this, "Invalid input for marks. Please enter valid integers.");
+            }
+        } else {
+            JOptionPane.showMessageDialog(this, "Input was cancelled or invalid.");
+        }
+    }
+
+    private void updatePerformanceDetails() {
+        String studentId = JOptionPane.showInputDialog("Enter Student ID to Update:");
+
+        if (studentId != null) {
+            String courseName = JOptionPane.showInputDialog("Enter New Course Name:");
+            String obtainMarksInput = JOptionPane.showInputDialog("Enter New Obtained Marks:");
+            String maximumMarksInput = JOptionPane.showInputDialog("Enter New Maximum Marks:");
+            String totalMarksInput = JOptionPane.showInputDialog("Enter New Total Marks:");
+
+            if (courseName != null && obtainMarksInput != null && maximumMarksInput != null && totalMarksInput != null) {
+                try {
+                    int obtainMarks = Integer.parseInt(obtainMarksInput);
+                    int maximumMarks = Integer.parseInt(maximumMarksInput);
+                    int totalMarks = Integer.parseInt(totalMarksInput);
+                    
+                    Performance performance = new Performance(studentId, courseName, String.valueOf(obtainMarks), String.valueOf(maximumMarks), String.valueOf(totalMarks));
+                    if (performance.updatePerformance()) {
+                        JOptionPane.showMessageDialog(this, "Performance updated successfully!");
+                    } else {
+                        JOptionPane.showMessageDialog(this, "Failed to update performance. Please check if the student ID exists.");
+                    }
+                } catch (NumberFormatException e) {
+                    JOptionPane.showMessageDialog(this, "Invalid input for marks. Please enter valid integers.");
+                }
+            }
+        }
+    }
+
+    private void viewPerformanceDetails() {
+        String studentId = JOptionPane.showInputDialog("Enter Student ID to View:");
+
+        if (studentId != null) {
+            Performance performance = new Performance(studentId, null, null, null, null); // Only ID is needed for retrieval
+            Performance retrievedPerformance = performance.viewPerformanceDetails(); 
+
+            if (retrievedPerformance != null) {
+                // Display the performance details
+                String message = "Student ID: " + retrievedPerformance.getStudentId() +
+                        "\nCourse Name: " + retrievedPerformance.getCourseName() +
+                        "\nObtained Marks: " + retrievedPerformance.getObtainMarks() +
+                        "\nMaximum Marks: " + retrievedPerformance.getMaximumMarks() +
+                        "\nTotal Marks: " + retrievedPerformance.getTotalMarks();
+                JOptionPane.showMessageDialog(this, message, "Performance Details", JOptionPane.INFORMATION_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this, "No performance record found with the given Student ID.", "Error", JOptionPane.ERROR_MESSAGE);
+            }
+        }
+    }
 
     public static void main(String[] args) {
         SwingUtilities.invokeLater(() -> {
@@ -342,4 +417,3 @@ public class AdminHomepage extends JFrame {
         });
     }
 }
-
