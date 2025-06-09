@@ -6,6 +6,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Scanner;
+import java.io.*;
 
 public class Student {
 
@@ -13,6 +14,7 @@ public class Student {
     private String name;
     private String email;
     private String phone;
+    private String Password;
     
 
     // Database credentials - change as per your setup
@@ -20,11 +22,12 @@ public class Student {
     private static final String USER = "root";
     private static final String PASS = "Jonsir@12345";
 
-    public Student(String studentId, String name, String email, String phone) {
+    public Student(String studentId, String name, String email, String phone,String Password) {
         this.studentId = studentId;
         this.name = name;
         this.email = email;
         this.phone = phone;
+        this.Password = Password;
        
     }
 
@@ -61,6 +64,14 @@ public class Student {
         this.phone = phone;
     }
     
+     public String getPassword() {
+        return Password;
+    }
+
+    public void setPassword(String Password) {
+        this.Password = Password;
+    }
+    
   
     /**
      * Adds the student to the database.
@@ -69,7 +80,7 @@ public class Student {
     public boolean addStudent() {
         Connection con = null;
         PreparedStatement stm = null;
-        String sql = "INSERT INTO student (student_id, name, email, phone) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO student (student_id, name, email, phone,Password) VALUES (?, ?, ?, ?, ?)";
 
         try {
             // Load and register JDBC driver for MySQL
@@ -84,6 +95,7 @@ public class Student {
             stm.setString(2, this.name);
             stm.setString(3, this.email);
             stm.setString(4, this.phone);
+            stm.setString(5, this.Password);
            
 
             int rowsInserted = stm.executeUpdate();
@@ -111,7 +123,7 @@ public class Student {
     public boolean updateStudent() {
         Connection con = null;
         PreparedStatement stm = null;
-        String sql = "UPDATE student SET name = ?, email = ?, phone = ? WHERE student_id = ?";
+        String sql = "UPDATE student SET name = ?, email = ?, phone = ?, Password = ? WHERE student_id = ?";
 
         try {
             // Load and register JDBC driver for MySQL
@@ -125,7 +137,8 @@ public class Student {
             stm.setString(1, this.name); // Set the new name
             stm.setString(2, this.email); // Set the new email
             stm.setString(3, this.phone);  // Set the new phone
-            stm.setString(4, this.studentId); // Set the student ID for the WHERE clause
+            stm.setString(4, this.Password);
+            stm.setString(5, this.studentId); // Set the student ID for the WHERE clause
 
             int rowsUpdated = stm.executeUpdate(); // Execute the update
             return rowsUpdated > 0; // Return true if at least one row was updated
@@ -153,7 +166,7 @@ public class Student {
         Connection con = null;
         PreparedStatement stm = null;
         ResultSet rs = null; // Declare ResultSet here
-        String sql = "SELECT name, email, phone FROM student WHERE student_id = ?";
+        String sql = "SELECT name, email, phone,Password FROM student WHERE student_id = ?";
 
         try {
             // Load and register JDBC driver for MySQL
@@ -175,7 +188,8 @@ public class Student {
                 String name = rs.getString("name");
                 String email = rs.getString("email");
                 String phone = rs.getString("phone");
-                return new Student(this.studentId, name, email,phone); // Return the Student object
+                String Password = rs.getString("Password");
+                return new Student(this.studentId, name, email,phone,Password); // Return the Student object
             } else {
                 return null; // No student found with the given ID
             }
@@ -217,9 +231,11 @@ public class Student {
         String email = scanner.nextLine();
         System.out.print("Enter Phone: ");
         String phone = scanner.nextLine();
+         System.out.print("Enter Password: ");
+        String Password = scanner.nextLine();
 
         // Create a new Student object
-        Student student = new Student(studentId, name, email,phone);
+        Student student = new Student(studentId, name, email,phone,Password);
 
         // Attempt to add the student to the database
         if (student.addStudent()) {
